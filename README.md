@@ -1,9 +1,11 @@
+import re
+import pickle
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, lower
+from pyspark.sql.functions import col, udf
+from pyspark.sql.types import ArrayType, StringType
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.linalg import Vectors
 from pyspark.ml import Pipeline
-import pickle
 
 # Initialize a Spark session
 spark = SparkSession.builder.appName("YourAppName").getOrCreate()
@@ -18,6 +20,7 @@ tfidf_payer_account_type = pickle.load(open("tfidf_payer_account_type.pkl", "rb"
 tfidf_payer_vpa = pickle.load(open("tfidf_payer_vpa.pkl", "rb"))
 tfidf_payee_vpa = pickle.load(open("tfidf_payee_vpa.pkl", "rb"))
 
+# Assuming df2 is your input DataFrame
 # Define a function to preprocess and predict the categories
 def preprocess_and_predict(payer_name, payee_name, payee_account_type,
                             payer_account_type, payer_vpa, payee_vpa):
@@ -47,20 +50,12 @@ def preprocess_and_predict(payer_name, payee_name, payee_account_type,
         payee_vpa_vec.toArray().tolist()
     )
 
-    # Predict
-    prediction_cat1 = clf_cat1.predict([feature_vector])
-    prediction_cat2 = clf_cat2.predict([feature_vector])
-
-    return [str(prediction_cat1[0]), str(prediction_cat2[0])]
-
-# Make sure your DataFrame has columns: payer_name, payee_name, payee_account_type, payer_account_type, payer_vpa, payee_vpa
-# Assuming df2 is your input DataFrame
-for col_name in ["payer_name", "payee_name", "payee_account_type", "payer_account_type", "payer_vpa", "payee_vpa"]:
-    df2 = df2.withColumn(col_name, lower(col(col_name)))
+    return [str(clf_cat1.predict([feature_vector])[0]), str(clf_cat2.predict([feature_vector])[0])]
 
 # Define the prediction UDF
 predict_udf = udf(preprocess_and_predict, ArrayType(StringType()))
 
+# Make sure your DataFrame has columns: payer_name, payee_name, payee_account_type, payer_account_type, payer_vpa, payee_vpa
 result_df = df2.withColumn("predictions", predict_udf("payer_name", "payee_name", "payee_account_type", "payer_account_type", "payer_vpa", "payee_vpa"))
 
 # Add the "category_level1" and "category_level2" columns

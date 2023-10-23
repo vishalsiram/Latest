@@ -1,3 +1,34 @@
+Transaction Classification Update: Enhanced Conflict Resolution Logic
+
+The previously utilized script for transaction classification leveraged two distinct frameworks: the Remarks Framework and the Beneficiary Framework. A salient challenge arose when these frameworks produced conflicting categorizations for a singular transaction. The original resolution logic was contingent upon the sequence (seq) in which these frameworks were executed:
+
+seq 'rb': The Remarks framework was prioritized, followed by the Beneficiary framework.
+seq 'br': The Beneficiary framework took precedence, succeeded by the Remarks framework.
+In scenarios where:
+
+The premier framework ascertained a default category and the latter discerned a specific category, the specific category from the second framework was adopted.
+Both frameworks identified specific yet divergent categories, the determination from the primary framework (in accordance with the chosen seq) was upheld.
+This methodology occasionally led to misclassifications due to an over-reliance on either the Remarks or Beneficiary data.
+
+Enhancement Overview:
+
+Our newly revised script mitigates these classification disparities. The core enhancement is the simultaneous integration of both the Remarks and Beneficiary columns during the classification process. By analyzing the correlation and contextual relationship between both columns, our approach ensures a more nuanced and accurate transaction classification.
+
+Benefits of the Updated Script:
+
+Mitigation of misclassifications.
+Superior transaction categorization by comprehending the intricate relationships between the Remarks and Beneficiary data.
+Enhanced efficiency in transaction categorization.
+We are confident that this advanced conflict resolution logic will provide more precise and reliable results, further enhancing the integrity of the transaction classification process.
+
+
+
+
+
+
+
+
+
 # coding: utf-8
 
 # In[1]:

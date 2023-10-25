@@ -1,3 +1,20 @@
+Hi Kiran,
+
+As discussed in last call, we are going through existing classification jobs and also identifying the optimized solution and tagging logic. Currently we went through the RTGS and classification framework for the same, other mode of transaction classification.
+
+We will send you the detailed report of existing framework by next Wednesday and Friday we can showcase the demo.
+
+
+
+---------------------------------------
+
+
+
+
+
+
+
+
 Transaction Classification Update: Enhanced Conflict Resolution Logic
 
 The previously utilized script for transaction classification leveraged two distinct frameworks: the Remarks Framework and the Beneficiary Framework. A salient challenge arose when these frameworks produced conflicting categorizations for a singular transaction. The original resolution logic was contingent upon the sequence (seq) in which these frameworks were executed:
